@@ -185,7 +185,7 @@ def preprocess_targets(targets, word2int, batch_size):
     left_side = tf.fill([batch_size, 1], word2int["<SOS>"])
     right_side = tf.strided_slice(targets, [0,0], [batch_size, -1], [1,1])
     preprocessed_targets = tf.concat([left_side, right_side], 1)
-    return preprocess_targets
+    return preprocessed_targets
 
 
 # ------------------ Creating the ENCODER RNN layer ----------------
@@ -206,7 +206,7 @@ def decode_training_set(encoder_state, decoder_cell, decoder_embedded_input, seq
     attention_states = tf.zeros([batch_size, 1, decoder_cell.output_size])
     attention_keys, attention_values, attention_score_function, attention_construct_function = tf.contrib.seq2seq.prepare_attention(
                                                                                                                     attention_states, 
-                                                                                                                    attention_option = "bahdanu", 
+                                                                                                                    attention_option = "bahdanau", 
                                                                                                                     num_units = decoder_cell.output_size)
     training_decoder_function = tf.contrib.seq2seq.attention_decoder_fn_train(encoder_state[0],
                                                                               attention_keys,
@@ -227,7 +227,7 @@ def decode_test_set(encoder_state, decoder_cell, decoder_embedding_matrix, sos_i
     attention_states = tf.zeros([batch_size, 1, decoder_cell.output_size])
     attention_keys, attention_values, attention_score_function, attention_construct_function = tf.contrib.seq2seq.prepare_attention(
                                                                                                                     attention_states, 
-                                                                                                                    attention_option = "bahdanu", 
+                                                                                                                    attention_option = "bahdanau", 
                                                                                                                     num_units = decoder_cell.output_size)
     test_decoder_function = tf.contrib.seq2seq.attention_decoder_fn_inference(
                                                                                 output_function, 
